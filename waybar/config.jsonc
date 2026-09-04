@@ -1,0 +1,40 @@
+[
+    {
+        "name": "overlay",
+        "layer": "top",
+        "position": "top",
+        "height": 30,
+        "margin-top": -30,
+        "exclusive": false,
+        "passthrough": true,
+        "include": [
+            "./modules/clock.jsonc"
+        ],
+        "modules-center": [
+            "custom/cava"
+        ]
+    },
+    {
+        "layer": "top",
+        "position": "top",
+        "height": 30,
+        "include": [
+            "./modules/workspace.jsonc",
+            "./modules/clock.jsonc",
+            "./modules/audio.jsonc",
+            "./modules/music.jsonc",
+            "./modules/notification.jsonc"
+        ],
+        "modules-left": [
+            "hyprland/workspaces",
+            "custom/music"
+        ],
+        "modules-center": [
+            "clock"
+        ],
+        "modules-right": [
+            "pulseaudio",
+            "custom/notification"
+        ]
+    }
+]

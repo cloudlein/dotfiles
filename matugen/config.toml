@@ -1,0 +1,38 @@
+[config]
+
+[templates.waybar]
+input_path = '~/.config/matugen/templates/waybar.css'
+output_path = '~/.config/waybar/tokens/colors.css'
+post_hook = 'pkill -SIGUSR2 waybar'
+
+# VS Code matugen extension
+[templates.vscode-raw]
+input_path = './templates/vscode-colors'
+output_path = '~/.cache/matugen/vscode-colors'
+
+[templates.vscode-json]
+input_path = './templates/vscode-colors.json'
+output_path = '~/.cache/matugen/vscode-colors.json'
+
+# jetbrain 
+[templates.intellij]
+input_path = "/home/udin/.config/matugen/colors.json.tera"
+output_path = "/home/udin/.config/JetBrains/matugen/colors.json"
+
+# rofi 
+[templates.rofi]
+input_path = "~/.config/matugen/templates/rofi.rasi"
+output_path = "~/.config/rofi/matugen.rasi"
+
+# kitty
+[templates.kitty]
+input_path = "~/.config/matugen/templates/kitty.conf"
+output_path = "~/.config/kitty/generated/matugen.conf"
+post_hook = "pkill -SIGUSR1 kitty"
+
+# nvim
+[templates.nvim]
+input_path = "~/.config/matugen/templates/nvim.lua"
+output_path = "~/.config/matugen/generated/nvim.lua"
+
+

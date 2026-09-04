@@ -1,0 +1,99 @@
+configuration {
+    show-icons: false;
+    markup-rows: true;
+}
+
+@import "~/.config/rofi/matugen.rasi"
+
+* {
+    font: "JetBrains Mono 11";
+
+    background-color: transparent;
+    text-color: @fg;
+}
+
+window {
+    width: 600px;
+    height: 420px;
+
+    background-color: @bg;
+
+    border: 2px;
+    border-color: @outline;
+
+    border-radius: 18px;
+
+    padding: 20px;
+}
+
+mainbox {
+    children: [
+        inputbar,
+        listview
+    ];
+
+    spacing: 15px;
+}
+
+inputbar {
+    background-color: @bg-alt;
+
+    border: 1px;
+    border-color: @outline-variant;
+
+    border-radius: 12px;
+
+    padding: 12px;
+}
+
+prompt {
+    text-color: @primary;
+
+    padding: 0px 8px 0px 0px;
+}
+
+entry {
+    text-color: @fg;
+
+    placeholder: "Choose source color...";
+    placeholder-color: @fg-muted;
+}
+
+listview {
+    columns: 1;
+    lines: 5;
+
+    spacing: 10px;
+
+    scrollbar: false;
+
+    fixed-height: false;
+    fixed-columns: true;
+}
+
+element {
+    orientation: horizontal;
+
+    background-color: @bg-alt;
+
+    border: 2px;
+    border-color: transparent;
+
+    border-radius: 12px;
+
+    padding: 12px 16px;
+
+    spacing: 12px;
+}
+
+element selected {
+    background-color: @primary-container;
+
+    border-color: @primary;
+}
+
+element-text {
+    text-color: @fg;
+
+    vertical-align: 0.5;
+}

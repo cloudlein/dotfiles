@@ -1,0 +1,27 @@
+/* =========================================
+ * Matugen → Rofi Material You Colors
+ * ========================================= */
+
+* {
+    bg: #0f1417;
+    bg-alt: #1c2023;
+    bg-high: #262b2e;
+
+    fg: #dfe3e7;
+    fg-muted: #c0c7cd;
+
+    primary: #8fcff3;
+    on-primary: #003549;
+
+    primary-container: #004c68;
+    on-primary-container: #c3e8ff;
+
+    secondary: #b5c9d7;
+    secondary-container: #364954;
+
+    outline: #8a9297;
+    outline-variant: #41484d;
+
+    error: #ffb4ab;
+    on-error: #690005;
+}

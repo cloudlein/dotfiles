@@ -1,0 +1,14 @@
+{
+    "custom/music": {
+        "format": "{}",
+        "max-length": 35,
+        "return-type": "json",
+        "interval": 2,
+        "exec": "$HOME/.config/waybar/scripts/music.sh",
+        "on-click": "playerctl -p brave play-pause",
+        "on-scroll-up": "playerctl -p brave next",
+        "on-scroll-down": "playerctl -p brave previous",
+        "escape": false,
+        "tooltip": true
+    }
+}

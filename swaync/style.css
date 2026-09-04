@@ -1,0 +1,15 @@
+* {
+  font-family: "AnnotationM Nerd Font";
+}
+
+.control-center {
+  background: rgba(20, 20, 0.85);
+  border-radius: 20px;
+  padding: 12px;
+}
+
+/* .notification { */
+/*   border-radius: 16px; */
+/*   p
+*   adding: 12px; */
+/* } */

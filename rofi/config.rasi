@@ -1,0 +1,268 @@
+/* =========================================
+ * Rofi Material You
+ * Powered by Matugen
+ * ========================================= */
+
+@import "matugen.rasi"
+
+
+/* =========================================
+ * Global
+ * ========================================= */
+
+* {
+    font: "JetBrainsMono Nerd Font 11";
+
+    background-color: transparent;
+    text-color: @fg;
+
+    margin: 0;
+    padding: 0;
+
+    spacing: 0;
+}
+
+
+/* =========================================
+ * Window
+ * ========================================= */
+
+window {
+    width: 650px;
+
+    background-color: @bg;
+
+    border: 2px;
+    border-color: @secondary;
+
+    border-radius: 24px;
+
+    padding: 18px;
+
+    location: center;
+    anchor: center;
+
+    x-offset: 0;
+    y-offset: 0;
+}
+
+
+/* =========================================
+ * Main container
+ * ========================================= */
+
+mainbox {
+    background-color: transparent;
+
+    children: [
+        inputbar,
+        listview
+    ];
+
+    spacing: 14px;
+}
+
+
+/* =========================================
+ * Search bar
+ * ========================================= */
+
+inputbar {
+    background-color: @bg-alt;
+
+    border-radius: 16px;
+
+    padding: 14px 16px;
+
+    children: [
+        prompt,
+        entry
+    ];
+}
+
+
+/* Search icon / prompt */
+
+prompt {
+    background-color: transparent;
+
+    text-color: @primary;
+
+    padding: 0 10px 0 0;
+}
+
+
+/* Search input */
+
+entry {
+    background-color: transparent;
+
+    text-color: @fg;
+
+    placeholder: "Search...";
+
+    placeholder-color: @fg-muted;
+
+    cursor: text;
+}
+
+
+/* =========================================
+ * Application list
+ * ========================================= */
+
+listview {
+    background-color: transparent;
+
+    columns: 1;
+
+    lines: 8;
+
+    cycle: true;
+
+    dynamic: true;
+
+    scrollbar: false;
+
+    spacing: 6px;
+
+    fixed-height: false;
+
+    layout: vertical;
+}
+
+
+/* =========================================
+ * Application item
+ * ========================================= */
+
+element {
+    background-color: @bg-high;
+
+    text-color: @fg;
+
+    border-radius: 14px;
+
+    padding: 10px 14px;
+
+    spacing: 12px;
+}
+
+element normal {
+    background-color: @bg-high;
+    text-color: @fg;
+}
+
+/* Selected application */
+
+element selected {
+    background-color: @primary-container;
+    text-color: @on-primary-container;
+}
+
+
+/* =========================================
+ r Application icon
+ * ========================================= */
+
+element-icon {
+    background-color: transparent;
+
+    size: 32px;
+
+    vertical-align: 0.5;
+
+    horizontal-align: 0.5;
+}
+
+
+/* =========================================
+ * Application text
+ * ========================================= */
+
+element-text {
+    background-color: transparent;
+
+    text-color: inherit;
+
+    vertical-align: 0.5;
+
+    horizontal-align: 0.0;
+}
+
+
+/* =========================================
+ * Selected text
+ * ========================================= */
+
+element selected element-text {
+    text-color: @on-primary-container;
+}
+
+
+/* =========================================
+ * Selected icon
+ * ========================================= */
+
+element selected element-icon {
+    background-color: transparent;
+}
+
+
+/* =========================================
+ * Message
+ * ========================================= */
+
+message {
+    background-color: @bg-alt;
+
+    border-radius: 12px;
+
+    padding: 10px;
+
+    text-color: @fg-muted;
+}
+
+
+/* =========================================
+ * Error
+ * ========================================= */
+
+error-message {
+    background-color: @error;
+
+    border-radius: 12px;
+
+    padding: 10px;
+
+    text-color: @on-error;
+}
+
+/* =========================================
+ * Override Rofi State Colors
+ * ========================================= */
+
+element normal.normal {
+    background-color: @bg-high;
+    text-color: @fg;
+}
+
+element selected.normal {
+    background-color: @primary-container;
+    text-color: @on-primary-container;
+}
+
+element alternate.normal {
+    background-color: @bg-high;
+    text-color: @fg;
+}
+
+element selected.active {
+    background-color: @primary-container;
+    text-color: @on-primary-container;
+}
+
+element selected.urgent {
+    background-color: @primary-container;
+    text-color: @on-primary-container;
+}

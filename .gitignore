@@ -1,0 +1,8 @@
+*.bak
+*.backup
+*.log
+*.swp
+*.swo
+*.tmp
+.env
+.env.*

@@ -1,0 +1,11 @@
+{
+  "positionX": "right",
+  "positionY": "top",
+  "layer": "overlay",
+  "control-center-widht": 400,
+  "notification-window-width": 400,
+  "notification-icon-size": 64,
+  "timeout": 10,
+  "timeout-low": 5,
+  "timeout-critical": 0
+}

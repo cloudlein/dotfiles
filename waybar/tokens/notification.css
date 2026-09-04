@@ -1,0 +1,18 @@
+@import "colors.css";
+
+#custom-notification {
+    margin: 5px 6px 1px 0px;
+    padding: 3px 0px;
+    min-width: 32px;
+    background-color: @surface_container;
+    color: @secondary_fixed_dim;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: bold;
+    transition: all 0.2s ease;
+}
+
+#custom-notification:hover {
+    background-color: @surface_container_high;
+    color: @primary;
+}
