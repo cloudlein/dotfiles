@@ -1,6 +1,6 @@
 # Dotfiles Configuration
 
-A clean, modern, and unified configuration setup for Linux featuring Hyprland (modular Lua configuration), dynamic Material You theming via Matugen, Waybar status bar, Kitty terminal, Rofi application menu, SwayNC notification center, Neovim (LazyVim), Cava visualizer, and Zsh.
+A clean, modern, and unified configuration setup for Linux featuring Hyprland (modular Lua configuration), dynamic Material You theming via Matugen, Waybar status bar, Kitty terminal, Rofi application menu, SwayNC notification center, Neovim (LazyVim), Fastfetch system fetch tool, Cava visualizer, and Zsh.
 
 ---
 
@@ -16,6 +16,7 @@ This repository manages configurations for:
 - **Dynamic Theming:** Matugen (Material You palette extraction)
 - **Wallpaper Daemon:** awww
 - **Text Editor:** Neovim (LazyVim setup)
+- **System Information Fetch:** Fastfetch
 - **Shell:** Zsh (Oh My Zsh)
 - **Audio Visualizer:** Cava
 - **Display Manager Theming:** SDDM (Matugen theme integration)
@@ -36,6 +37,7 @@ sudo pacman -S --needed \
     waybar \
     kitty \
     swaynotificationcenter \
+    fastfetch \
     cava \
     neovim \
     zsh \
@@ -76,7 +78,7 @@ yay -S --needed \
 | **Color Generation & Theming** | `matugen-bin`, `imagemagick` | Dynamic Material You palette extraction and template rendering |
 | **Screenshot & Clipboard** | `grim`, `slurp`, `satty`, `wl-clipboard` | Screen capture, area selection, image annotation, and clipboard sharing |
 | **Audio & Media Control** | `cava`, `playerctl`, `pipewire-pulse`, `wireplumber` | Audio visualization in Waybar, media controls, and volume management |
-| **System Utilities** | `brightnessctl`, `libnotify`, `dolphin`, `curl`, `jq` | Brightness keys, desktop notifications, file manager, and script parsers |
+| **System Utilities** | `fastfetch`, `brightnessctl`, `libnotify`, `dolphin`, `curl`, `jq` | System information fetch, brightness keys, desktop notifications, file manager, and script parsers |
 | **Shell & Environment** | `zsh`, `git` | Modern shell and version control |
 
 ### Typography & Fonts
@@ -105,7 +107,7 @@ Before deploying symlinks, backup any existing configuration folders to prevent 
 
 ```bash
 mkdir -p ~/.config-backup
-for item in hypr kitty rofi waybar swaync matugen nvim cava; do
+for item in hypr kitty rofi waybar swaync matugen nvim cava fastfetch; do
     [ -e "$HOME/.config/$item" ] && mv "$HOME/.config/$item" ~/.config-backup/
 done
 [ -f "$HOME/.zshrc" ] && mv "$HOME/.zshrc" ~/.config-backup/
@@ -127,6 +129,7 @@ ln -sfn ~/projects/dotfiles/swaync ~/.config/swaync
 ln -sfn ~/projects/dotfiles/matugen ~/.config/matugen
 ln -sfn ~/projects/dotfiles/nvim ~/.config/nvim
 ln -sfn ~/projects/dotfiles/cava ~/.config/cava
+ln -sfn ~/projects/dotfiles/fastfetch ~/.config/fastfetch
 
 # Symlink Zsh configuration
 ln -sf ~/projects/dotfiles/.zshrc ~/.zshrc
@@ -173,6 +176,7 @@ git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:
 ```
 dotfiles/
 ├── cava/                 # Cava audio visualizer configuration & themes
+├── fastfetch/            # Fastfetch configuration and custom assets
 ├── hypr/                 # Hyprland modular Lua configs and helper scripts
 │   ├── hyprland.lua      # Lua entrypoint for Hyprland
 │   ├── lua/              # Modular settings (env, keybinds, autostart, etc.)
