@@ -1,225 +1,506 @@
-# Dotfiles Configuration
+# Dotfiles
 
-A clean, modern, and unified configuration setup for Linux featuring Hyprland (modular Lua configuration), dynamic Material You theming via Matugen, Waybar status bar, Kitty terminal, Rofi application menu, SwayNC notification center, Neovim (LazyVim), Fastfetch system fetch tool, Cava visualizer, and Zsh.
+A modern, dynamic Arch Linux desktop environment powered by **Hyprland** (configured in Lua), **Waybar**, **Rofi**, **SwayNC**, and an automated Material You dynamic color palette engine powered by **Matugen** and **awww**.
+
+---
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Repository Structure](#repository-structure)
+- [Prerequisites & Dependencies](#prerequisites--dependencies)
+  - [Official Arch Repositories (pacman)](#official-arch-repositories-pacman)
+  - [AUR Packages (yay)](#aur-packages-yay)
+  - [Fonts](#fonts)
+- [Installation & Deployment](#installation--deployment)
+  - [1. Clone Repository](#1-clone-repository)
+  - [2. Deploy Configuration Files](#2-deploy-configuration-files)
+  - [3. Wallpaper Setup](#3-wallpaper-setup)
+  - [4. Zsh & Oh My Zsh Setup](#4-zsh--oh-my-zsh-setup)
+- [External Application Configurations](#external-application-configurations)
+  - [Brave Browser CDP Setup (Required for Music Module)](#brave-browser-cdp-setup-required-for-music-module)
+- [Core Features & Architecture](#core-features--architecture)
+  - [Dynamic Theming Workflow (Matugen + awww)](#dynamic-theming-workflow-matugen--awww)
+  - [Hyprland Lua Configuration](#hyprland-lua-configuration)
+  - [Waybar & Visualizer Overlay](#waybar--visualizer-overlay)
+  - [Screenshot Workflow](#screenshot-workflow)
+  - [Notification Center](#notification-center)
+  - [Neovim (LazyVim + Matugen Integration)](#neovim-lazyvim--matugen-integration)
+- [Keybindings Reference](#keybindings-reference)
+- [Maintenance & Shell Helpers](#maintenance--shell-helpers)
+- [Troubleshooting](#troubleshooting)
 
 ---
 
 ## Overview
 
-This repository manages configurations for:
-
-- **Window Manager:** Hyprland (configured via modular Lua)
-- **Status Bar:** Waybar
-- **Terminal:** Kitty
-- **Application Launcher & Pickers:** Rofi
-- **Notifications:** SwayNC
-- **Dynamic Theming:** Matugen (Material You palette extraction)
-- **Wallpaper Daemon:** awww
-- **Text Editor:** Neovim (LazyVim setup)
-- **System Information Fetch:** Fastfetch
-- **Shell:** Zsh (Oh My Zsh)
-- **Audio Visualizer:** Cava
-- **Display Manager Theming:** SDDM (Matugen theme integration)
+This repository provides a cohesive desktop workflow with:
+- **Hyprland** modular configuration written in **Lua**.
+- **Matugen** color harmonization: selecting a wallpaper extracts a Material You palette and instantly reloads themes across Waybar, Rofi, Kitty, and Neovim without restarting your session.
+- **Dual-layer Waybar**: an interactive status bar paired with an overlay status bar running an integrated **CAVA** audio visualizer.
+- **Brave CDP Music Widget**: real-time track metadata and player controls targeting active Spotify and YouTube Music web tabs.
+- **Annotation & Screenshot Pipeline**: region selection with Slurp into Grim piped directly to Satty with clipboard integration.
 
 ---
 
-## Required Packages
+## Repository Structure
 
-To ensure all configurations, scripts, shortcuts, and themes work properly, install the following packages.
+```text
+dotfiles/
+├── .zshrc                           # Zsh configuration, aliases, and daemon reload helpers
+├── cava/
+│   ├── config                       # CAVA audio visualizer configuration
+│   ├── shaders/                     # Custom visualizer shaders (pass_through, bar_spectrum, northern_lights)
+│   └── themes/                      # Visualizer color themes
+├── fastfetch/
+│   ├── config.jsonc                 # Fastfetch system info layout
+│   └── assets/                      # Fastfetch logos and image assets
+├── hypr/
+│   ├── hyprland.lua                 # Main Hyprland Lua entrypoint
+│   ├── hyprpaper.conf               # Fallback wallpaper configuration
+│   ├── lua/                         # Modular Hyprland Lua configurations
+│   │   ├── animations.lua           # Window animations and cubic bezier curves
+│   │   ├── autostart.lua            # Autostart daemons (waybar, awww-daemon, swaync)
+│   │   ├── env.lua                  # Environment variables (XDG, Wayland, Cursor)
+│   │   ├── input.lua                # Keyboard layout, mouse sensitivity, touchpad settings
+│   │   ├── keybinds.lua             # Window management, app dispatchers, and media binds
+│   │   ├── look.lua                 # Borders, gaps, blur, shadows, and layout mode
+│   │   ├── monitors.lua             # Display resolution and scale settings
+│   │   └── rules.lua                # Window rules, floating rules, and suppressmaximize
+│   └── scripts/
+│       └── wallpaper-picker.sh      # Rofi grid picker, awww transitions, and matugen runner
+├── kitty/
+│   ├── kitty.conf                   # Terminal emulator font and operational settings
+│   └── generated/
+│       └── matugen.conf             # Dynamic terminal palette (generated by Matugen)
+├── matugen/
+│   ├── config.toml                  # Matugen template definitions and reload hook commands
+│   └── templates/                   # Color scheme templates for Waybar, Kitty, Rofi, Nvim, and VS Code
+├── nvim/                            # LazyVim setup
+│   ├── init.lua                     # Neovim entrypoint
+│   ├── lazy-lock.json               # Plugin lockfile
+│   ├── lazyvim.json                 # LazyVim extra modules
+│   └── lua/
+│       ├── config/                  # LazyVim core (autocmds, keymaps, options, lazy bootstrap)
+│       └── plugins/                 # Custom plugins (cord.nvim, matugen.lua, nvim-colorizer, qml.lua)
+├── rofi/
+│   ├── config.rasi                  # Main application launcher layout
+│   ├── wallpaper.rasi               # Grid layout for wallpaper selection thumbnail gallery
+│   ├── color-picker.rasi            # Color theme picker layout
+│   └── matugen.rasi                 # Dynamic Rofi palette (generated by Matugen)
+├── swaync/
+│   ├── config.json                  # Notification daemon configuration and widget hierarchy
+│   └── style.css                    # SwayNC widget and notification styling
+└── waybar/
+    ├── config.jsonc                 # Waybar dual-bar definitions (main bar and cava overlay)
+    ├── style.css                    # Waybar base styles and layout
+    ├── modules/                     # Modular module definitions (audio, clock, music, notifications, workspaces)
+    ├── scripts/
+    │   ├── cava.sh                  # CAVA terminal/bar stream parser for Waybar
+    │   └── music.sh                 # Brave CDP Spotify/YouTube Music state and control script
+    └── tokens/
+        └── colors.css               # Dynamic Waybar CSS variables (generated by Matugen)
+```
 
-### Arch Linux / Pacman & AUR
+---
 
-#### 1. Official Repositories (Pacman)
+## Prerequisites & Dependencies
+
+### Official Arch Repositories (pacman)
+
+Install the required core packages from the official Arch Linux repositories:
 
 ```bash
 sudo pacman -S --needed \
     hyprland \
-    waybar \
     kitty \
-    swaynotificationcenter \
-    fastfetch \
-    cava \
-    neovim \
-    zsh \
-    git \
-    curl \
-    jq \
-    dolphin \
-    imagemagick \
+    waybar \
+    rofi \
+    swaync \
+    awww \
+    hyprshutdown \
+    satty \
     grim \
     slurp \
-    satty \
     wl-clipboard \
-    playerctl \
-    brightnessctl \
-    pipewire-pulse \
+    imagemagick \
+    cava \
+    fastfetch \
+    zsh \
+    dolphin \
+    pavucontrol \
     wireplumber \
+    brightnessctl \
+    playerctl \
+    jq \
+    curl \
     libnotify \
     ttf-jetbrains-mono-nerd
 ```
 
-#### 2. AUR Packages (Yay / Paru)
+#### Package Roles
+
+| Package | Purpose in Dotfiles |
+| :--- | :--- |
+| `hyprland` | Wayland compositor and window manager |
+| `kitty` | GPU-accelerated terminal emulator |
+| `waybar` | Status bar (hosts both main bar and visualizer overlay) |
+| `rofi` | Application launcher and wallpaper picker menu |
+| `swaync` | Notification daemon (`swaync`) and client (`swaync-client`) |
+| `awww` | High-performance animated wallpaper daemon (`awww-daemon`, `awww img`) |
+| `hyprshutdown` | Desktop session power menu dispatcher |
+| `satty`, `grim`, `slurp`, `wl-clipboard` | Interactive area screenshot and annotation pipeline |
+| `imagemagick` | Thumbnail generation (`magick`) used in wallpaper picker script |
+| `cava` | Audio visualizer engine feeding Waybar overlay |
+| `pavucontrol`, `wireplumber` | Audio control GUI and `wpctl` volume dispatcher |
+| `brightnessctl`, `playerctl` | Backlight control and media playback control |
+| `jq`, `curl` | JSON parsing and HTTP client for Brave CDP music script |
+| `libnotify` | Desktop notification dispatcher (`notify-send`) |
+| `dolphin` | Default file manager dispatched via `SUPER + E` |
+| `ttf-jetbrains-mono-nerd` | Primary icon and UI font for Waybar and Rofi |
+
+### AUR Packages (yay)
+
+Install packages available via the Arch User Repository (AUR):
 
 ```bash
 yay -S --needed \
     matugen-bin \
-    awww \
-    rofi-wayland \
-    hyprshutdown
+    brave-bin
 ```
 
-### Categorized Package Breakdown
+- **`matugen-bin`**: The Material You color palette generator that reads the current wallpaper and produces dynamic color files for Waybar, Kitty, Rofi, and Neovim.
+- **`brave-bin`**: The Chromium-based browser used by the Waybar music module via the Chrome DevTools Protocol.
 
-| Category | Packages | Purpose |
-|---|---|---|
-| **Compositor & System** | `hyprland`, `waybar`, `swaynotificationcenter`, `awww`, `hyprshutdown` | Window manager, top status bar, notifications, and wallpaper daemon |
-| **Terminal & Editor** | `kitty`, `neovim` | Terminal emulator and code editor |
-| **Menu & Application Launcher** | `rofi-wayland` | App launcher, dynamic wallpaper selector, and color palette picker |
-| **Color Generation & Theming** | `matugen-bin`, `imagemagick` | Dynamic Material You palette extraction and template rendering |
-| **Screenshot & Clipboard** | `grim`, `slurp`, `satty`, `wl-clipboard` | Screen capture, area selection, image annotation, and clipboard sharing |
-| **Audio & Media Control** | `cava`, `playerctl`, `pipewire-pulse`, `wireplumber` | Audio visualization in Waybar, media controls, and volume management |
-| **System Utilities** | `fastfetch`, `brightnessctl`, `libnotify`, `dolphin`, `curl`, `jq` | System information fetch, brightness keys, desktop notifications, file manager, and script parsers |
-| **Shell & Environment** | `zsh`, `git` | Modern shell and version control |
+### Fonts
 
-### Typography & Fonts
-
-- **Terminal Font (Kitty):** `AnnotationM Nerd Font` (`AnnotationMNF`) - 11pt
-- **UI & Bar Font (Waybar / Rofi):** `JetBrainsMono Nerd Font` (`ttf-jetbrains-mono-nerd`)
-
-Ensure the Nerd Fonts are installed on your system (e.g. copied to `~/.local/share/fonts/` or installed via your package manager) and run `fc-cache -fv` to refresh the font cache.
+The configurations use two primary fonts:
+1. **JetBrains Mono Nerd Font**: Installed via `ttf-jetbrains-mono-nerd` (official package). Used by Waybar and Rofi.
+2. **AnnotationM Nerd Font**: Used by `kitty/kitty.conf` (`font_family AnnotationM Nerd Font`) and `swaync/style.css`.
+   - If not present in your system fonts, obtain and install the font file (TTF/OTF) to `~/.local/share/fonts/`:
+     ```bash
+     mkdir -p ~/.local/share/fonts
+     # Copy AnnotationM Nerd Font files here, then update font cache:
+     fc-cache -fv
+     ```
+   - *Alternative*: If you prefer JetBrains Mono in Kitty, update `font_family` in `~/.config/kitty/kitty.conf` to `JetBrainsMono Nerd Font`.
 
 ---
 
-## Installation Steps
+## Installation & Deployment
 
-### 1. Clone the Repository
+### 1. Clone Repository
 
-Clone this repository into your home directory or local projects path:
+Clone this repository into your preferred directory (e.g. `~/projects/dotfiles`):
 
 ```bash
+mkdir -p ~/projects
 git clone https://github.com/cloudlein/dotfiles.git ~/projects/dotfiles
 cd ~/projects/dotfiles
 ```
 
-### 2. Backup Existing Configurations
+### 2. Deploy Configuration Files
 
-Before deploying symlinks, backup any existing configuration folders to prevent data loss:
-
-```bash
-mkdir -p ~/.config-backup
-for item in hypr kitty rofi waybar swaync matugen nvim cava fastfetch; do
-    [ -e "$HOME/.config/$item" ] && mv "$HOME/.config/$item" ~/.config-backup/
-done
-[ -f "$HOME/.zshrc" ] && mv "$HOME/.zshrc" ~/.config-backup/
-```
-
-### 3. Deploy Configuration Files
-
-Create symbolic links from the dotfiles repository to your `~/.config` and `~/.zshrc`:
+You can deploy the configurations by creating symbolic links from `~/.config` pointing into the cloned repository (recommended for easy updates) or by copying them:
 
 ```bash
+# Ensure target directories exist
 mkdir -p ~/.config
+mkdir -p ~/.cache/matugen
+mkdir -p ~/.config/matugen/generated
+mkdir -p ~/.config/kitty/generated
+mkdir -p ~/.config/waybar/tokens
 
 # Symlink configurations to ~/.config
 ln -sfn ~/projects/dotfiles/hypr ~/.config/hypr
-ln -sfn ~/projects/dotfiles/kitty ~/.config/kitty
-ln -sfn ~/projects/dotfiles/rofi ~/.config/rofi
 ln -sfn ~/projects/dotfiles/waybar ~/.config/waybar
-ln -sfn ~/projects/dotfiles/swaync ~/.config/swaync
+ln -sfn ~/projects/dotfiles/rofi ~/.config/rofi
 ln -sfn ~/projects/dotfiles/matugen ~/.config/matugen
+ln -sfn ~/projects/dotfiles/kitty ~/.config/kitty
+ln -sfn ~/projects/dotfiles/swaync ~/.config/swaync
 ln -sfn ~/projects/dotfiles/nvim ~/.config/nvim
 ln -sfn ~/projects/dotfiles/cava ~/.config/cava
 ln -sfn ~/projects/dotfiles/fastfetch ~/.config/fastfetch
 
-# Symlink Zsh configuration
-ln -sf ~/projects/dotfiles/.zshrc ~/.zshrc
+# Symlink .zshrc
+ln -sfn ~/projects/dotfiles/.zshrc ~/.zshrc
 ```
 
-### 4. Ensure Script Permissions
-
-Grant execution rights to custom helper scripts:
+Make sure script executables have proper execution permissions:
 
 ```bash
-chmod +x ~/.config/hypr/scripts/*
-chmod +x ~/.config/waybar/scripts/*
+chmod +x ~/.config/hypr/scripts/*.sh
+chmod +x ~/.config/waybar/scripts/*.sh
 ```
 
-### 5. Setup Wallpapers Directory
+### 3. Wallpaper Setup
 
-The dynamic wallpaper picker script scans `~/wallpapers` for image files (`.jpg`, `.jpeg`, `.png`, `.webp`):
+The wallpaper picker script scans `~/wallpapers/` for images (`.jpg`, `.jpeg`, `.png`, `.webp`):
 
 ```bash
 mkdir -p ~/wallpapers
+# Add your favorite wallpapers into ~/wallpapers/
 ```
 
-Place your wallpaper collection inside `~/wallpapers`.
-
-### 6. Install Oh My Zsh & Shell Plugins
-
-If Oh My Zsh is not already installed:
+To initialize your theme and wallpaper immediately, run:
 
 ```bash
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+~/.config/hypr/scripts/wallpaper-picker.sh
 ```
 
-Install the required Zsh plugins:
+Select a wallpaper from the Rofi grid. Matugen will generate your color palettes and reload active components automatically.
 
-```bash
-git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
-git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
-```
+### 4. Zsh & Oh My Zsh Setup
+
+The included `.zshrc` is configured for [Oh My Zsh](https://ohmyz.sh/) with the `robbyrussell` theme and community plugins.
+
+1. Install Oh My Zsh (if not already installed):
+   ```bash
+   sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+   ```
+2. Install the required Zsh plugins:
+   ```bash
+   git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+   git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+   ```
+3. Re-link `.zshrc` if the Oh My Zsh installer backed it up:
+   ```bash
+   ln -sfn ~/projects/dotfiles/.zshrc ~/.zshrc
+   ```
 
 ---
 
-## Directory Structure
+## External Application Configurations
 
+### Brave Browser CDP Setup (Required for Music Module)
+
+The Waybar music widget (`waybar/scripts/music.sh`) integrates directly with web-based music players inside Brave Browser using the **Chrome DevTools Protocol (CDP)** on port `9222`.
+
+#### Why This Is Needed
+- Standard MPRIS often groups general video playback (e.g. YouTube videos, tutorials) together with music.
+- The `music.sh` script connects to `http://127.0.0.1:9222/json`, specifically identifies tabs running **Spotify** or **YouTube Music**, rejects regular YouTube tabs, and extracts live track titles, artists, and playback state directly.
+- It also supports interactive controls: clicking the Waybar music widget triggers `playerctl -p brave play-pause`, while scrolling steps to previous or next tracks.
+
+#### How to Enable Remote Debugging Port 9222
+
+Brave must be launched with the `--remote-debugging-port=9222` flag.
+
+**Option A: Update the Desktop Entry (Recommended)**
+
+Copy Brave's desktop entry to your local applications folder and modify `Exec`:
+
+```bash
+mkdir -p ~/.local/share/applications
+cp /usr/share/applications/brave-browser.desktop ~/.local/share/applications/
+sed -i 's|Exec=/usr/bin/brave|Exec=/usr/bin/brave --remote-debugging-port=9222|g' ~/.local/share/applications/brave-browser.desktop
 ```
-dotfiles/
-├── cava/                 # Cava audio visualizer configuration & themes
-├── fastfetch/            # Fastfetch configuration and custom assets
-├── hypr/                 # Hyprland modular Lua configs and helper scripts
-│   ├── hyprland.lua      # Lua entrypoint for Hyprland
-│   ├── lua/              # Modular settings (env, keybinds, autostart, etc.)
-│   └── scripts/          # Dynamic wallpaper & color picker
-├── kitty/                # Kitty terminal emulator configuration
-├── matugen/              # Material You templates and configuration
-├── nvim/                 # Neovim (LazyVim) IDE configuration
-├── rofi/                 # Application launcher and picker themes
-├── swaync/               # Sway Notification Center styling and configuration
-├── waybar/               # Status bar configuration, custom modules & scripts
-├── .zshrc                # Zsh shell configuration and aliases
-└── README.md             # Documentation and installation guide
+
+**Option B: Shell Wrapper or Alias**
+
+Add an alias or launcher wrapper in your environment:
+
+```bash
+alias brave="brave --remote-debugging-port=9222"
 ```
+
+#### Verifying CDP Status
+
+Open Brave and navigate to [YouTube Music](https://music.youtube.com) or [Spotify Web Player](https://open.spotify.com). Then test connectivity in a terminal:
+
+```bash
+curl -s http://127.0.0.1:9222/json
+```
+
+If configured properly, this command outputs JSON array data listing open browser targets and tabs. The Waybar music module will now display your track information and controls.
+
+---
+
+## Core Features & Architecture
+
+### Dynamic Theming Workflow (Matugen + awww)
+
+```text
+[ SUPER + W ]
+      │
+      ▼
+hypr/scripts/wallpaper-picker.sh
+      ├── 1. Generates thumbnails in ~/.cache/wallpaper-thumbnails/
+      ├── 2. Opens Rofi grid menu (rofi/wallpaper.rasi)
+      ├── 3. Applies wallpaper via awww img (animated transition)
+      └── 4. Executes: matugen image "<selected_wallpaper>"
+               │
+               ├──> ~/.config/waybar/tokens/colors.css  ──> reloads Waybar (pkill -SIGUSR2 waybar)
+               ├──> ~/.config/rofi/matugen.rasi        ──> reloads Rofi theme
+               ├──> ~/.config/kitty/generated/matugen.conf ──> updates Kitty (kitty @ set-colors)
+               ├──> ~/.config/matugen/generated/nvim.lua ──> notifies Nvim (pkill -SIGUSR1 nvim)
+               └──> ~/.cache/matugen/vscode-*          ──> updates VS Code theme cache
+```
+
+- **Wallpaper Transitions**: `wallpaper-picker.sh` uses `awww` with `--transition-type outer`, `--transition-step 90`, and `--transition-fps 165` for high-refresh-rate animations.
+- **Instant Terminal Theming**: `kitty.conf` configures `allow_remote_control yes` and `listen_on unix:@kitty-{kitty_pid}`, enabling Matugen to push color updates live into open terminals.
+- **Neovim Live Palette Reload**: `nvim/lua/plugins/matugen.lua` listens for `SIGUSR1` and reloads highlights without requiring an editor restart.
+
+### Hyprland Lua Configuration
+
+Hyprland settings are modularized cleanly in `hypr/lua/` and loaded by `hypr/hyprland.lua`:
+
+- **`lua/monitors.lua`**: Configured default `monitor=,preferred,auto,auto`.
+- **`lua/autostart.lua`**: Launches core session daemons:
+  ```lua
+  hl.exec("waybar & awww-daemon & swaync")
+  ```
+- **`lua/look.lua`**: Dwindle layout, 2px borders, 5px gaps, and dual-layer blur settings (`size = 8, passes = 2`).
+- **`lua/animations.lua`**: Custom `easeOutQuint` cubic-bezier curves for windows, fades, and workspace transitions.
+- **`lua/rules.lua`**: Window rules (floating rules for file managers, media, and `suppressEvent = 'maximize'`).
+
+### Waybar & Visualizer Overlay
+
+Waybar is configured in `waybar/config.jsonc` with two simultaneous bars:
+1. **Main Bar (`bar-0`)**: Positioned at the top. Contains:
+   - **Left**: `hyprland/workspaces` (Roman numeral formatting with dynamic underline pills).
+   - **Center**: `custom/music` (Brave CDP Spotify/YT Music metadata with scrolling text marquee) and `clock`.
+   - **Right**: `pulseaudio` (volume bar and pavucontrol dispatcher) and `custom/notification` (SwayNC bell with unread count).
+2. **Overlay Bar (`overlay`)**: Positioned at the top with `passthrough: true` and a negative top margin. Houses `custom/cava`, rendering an audio frequency spectrum visualizer directly below the clock widget.
+
+### Screenshot Workflow
+
+Triggered via **`SUPER + L`**:
+
+```bash
+grim -g "$(slurp)" - | satty --filename - --copy-command wl-copy
+```
+
+1. **`slurp`** allows selecting an interactive region or clicking a window.
+2. **`grim`** captures the selected pixel geometry to standard output.
+3. **`satty`** opens an immediate annotation editor where you can crop, draw arrows, highlight, redact, and copy to the system clipboard via **`wl-copy`**.
+
+### Notification Center
+
+The desktop uses **SwayNC** (`swaynotificationcenter`):
+- Launched on Hyprland startup via `hypr/lua/autostart.lua`.
+- Togglable via the Waybar notification module (`swaync-client -t`).
+- Styled using a clean dark theme (`swaync/style.css`) with integrated notification badges.
+
+### Neovim (LazyVim + Matugen Integration)
+
+- Built upon the **LazyVim** starter framework.
+- Uses `lazy.nvim` plugin manager (bootstrapped automatically on first launch).
+- Includes **`cord.nvim`** for rich Discord presence.
+- Includes **`nvim-colorizer.lua`** for in-editor color hex previews.
+- Custom **`matugen.lua`** plugin dynamically applies the generated Material You color scheme and reloads it upon receiving `SIGUSR1`.
 
 ---
 
 ## Keybindings Reference
 
-Default modifier: `SUPER` (Windows key)
+All keybindings are defined in `hypr/lua/keybinds.lua`. The default modifier key is `SUPER` (`Windows` key).
+
+### Application Launchers & System Actions
+
+| Keybinding | Action | Command / Dispatcher |
+| :--- | :--- | :--- |
+| `SUPER + Q` | Open Terminal | `kitty` |
+| `SUPER + C` | Close Active Window | `killactive` |
+| `SUPER + M` | Exit / Power Menu | `hyprshutdown` (fallback `hl.dsp.exit()`) |
+| `SUPER + E` | Open File Manager | `dolphin` |
+| `SUPER + R` | Application Launcher | `rofi -show drun` |
+| `SUPER + W` | Wallpaper & Theme Picker | `~/.config/hypr/scripts/wallpaper-picker.sh` |
+| `SUPER + L` | Screenshot & Annotate | `grim -g "$(slurp)" - \| satty --filename - --copy-command wl-copy` |
+
+### Window Management & Layout
 
 | Keybinding | Action |
-|---|---|
-| `SUPER + Q` | Launch Terminal (Kitty) |
-| `SUPER + C` | Close Active Window |
-| `SUPER + R` | Application Launcher (Rofi) |
-| `SUPER + E` | File Manager (Dolphin) |
-| `SUPER + V` | Toggle Floating Window |
-| `SUPER + W` | Dynamic Wallpaper & Theme Selector |
-| `SUPER + L` | Screenshot Tool (Grim + Slurp + Satty) |
-| `SUPER + J` | Toggle Split (Dwindle layout) |
-| `SUPER + M` | Exit Session / Hyprshutdown |
-| `SUPER + 1..0` | Switch Workspace 1-10 |
-| `SUPER + SHIFT + 1..0` | Move Window to Workspace 1-10 |
-| `SUPER + S` | Toggle Special Workspace (Scratchpad) |
-| `SUPER + SHIFT + S` | Move Window to Special Workspace |
-| `SUPER + Arrow Keys` | Focus Window Navigation |
+| :--- | :--- |
+| `SUPER + V` | Toggle Floating Mode |
+| `SUPER + P` | Toggle Pseudo-Tiling |
+| `SUPER + J` | Toggle Dwindle Split Direction |
+| `SUPER + Left / Right / Up / Down` | Move Focus in Direction |
+| `SUPER + LMB (Drag)` | Move Window |
+| `SUPER + RMB (Drag)` | Resize Window |
+
+### Workspaces & Scratchpad
+
+| Keybinding | Action |
+| :--- | :--- |
+| `SUPER + [1 - 0]` | Switch to Workspace 1 through 10 |
+| `SUPER + SHIFT + [1 - 0]` | Move Active Window to Workspace 1 through 10 |
+| `SUPER + S` | Toggle Special Workspace ("magic" scratchpad) |
+| `SUPER + SHIFT + S` | Move Active Window to Special Workspace |
+| `SUPER + Mouse Scroll` | Cycle Active Workspaces |
+
+### Hardware & Media Controls
+
+| Key / Combination | Action | Command |
+| :--- | :--- | :--- |
+| `XF86AudioRaiseVolume` | Volume Up (+5%) | `wpctl set-volume -l 1.5 @DEFAULT_AUDIO_SINK@ 5%+` |
+| `XF86AudioLowerVolume` | Volume Down (-5%) | `wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-` |
+| `XF86AudioMute` | Mute / Unmute Audio | `wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle` |
+| `XF86AudioMicMute` | Mute / Unmute Mic | `wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle` |
+| `XF86MonBrightnessUp` | Brightness Up (+5%) | `brightnessctl -q s 5%+` |
+| `XF86MonBrightnessDown` | Brightness Down (-5%) | `brightnessctl -q s 5%-` |
+| `XF86AudioPlay / Pause` | Toggle Media Playback | `playerctl play-pause` |
+| `XF86AudioNext` | Next Track | `playerctl next` |
+| `XF86AudioPrev` | Previous Track | `playerctl previous` |
 
 ---
 
-## Theming & Matugen Integration
+## Maintenance & Shell Helpers
 
-The wallpaper picker script (`SUPER + W`) dynamically updates the system theme:
+The included `.zshrc` provides convenient shortcuts and helper functions for session management:
 
-1. Select a wallpaper from `~/wallpapers` via Rofi.
-2. Select an extracted color swatch from the image palette.
-3. Matugen applies dynamic colors across Waybar, Kitty, Rofi, Neovim, and SDDM without requiring a full session restart.
+```bash
+# Waybar & CAVA Reload Helper
+way             # Restarts Waybar and resets CAVA visualizer stream
+
+# Terminal Palette Reload
+kitty-reload    # Signals Kitty to re-read Matugen colors
+
+# Notification Center Helpers
+swaync restart  # Restarts swaync daemon
+swaync notif    # Sends a test notification through notify-send
+
+# Docker Convenience Aliases
+dock ps         # alias for docker ps
+dock up         # alias for docker compose up -d
+dock down       # alias for docker compose down
+```
+
+---
+
+## Troubleshooting
+
+### 1. Wallpaper Picker Shows No Images
+- Ensure images (`.jpg`, `.jpeg`, `.png`, `.webp`) are placed in `~/wallpapers/`.
+- Ensure `imagemagick` is installed so that `magick` can create thumbnails in `~/.cache/wallpaper-thumbnails/`.
+
+### 2. Waybar Music Widget Displays "No music playing"
+- Verify Brave was launched with remote debugging enabled:
+  ```bash
+  curl -s http://127.0.0.1:9222/json
+  ```
+- Ensure music is actively playing in a **Spotify** (`open.spotify.com`) or **YouTube Music** (`music.youtube.com`) tab. General YouTube video tabs are intentionally ignored by `waybar/scripts/music.sh`.
+
+### 3. CAVA Overlay Not Showing Visualizer Bars
+- Ensure `cava` is installed and functioning: test it directly by running `cava` in a terminal.
+- Ensure audio is currently playing through your default PulseAudio / PipeWire sink.
+- Reload Waybar with the helper command:
+  ```bash
+  way
+  ```
+
+### 4. Terminal Colors Do Not Update on Wallpaper Change
+- Ensure `allow_remote_control yes` and `listen_on unix:@kitty-{kitty_pid}` are active in `~/.config/kitty/kitty.conf`.
+- Test manual color injection:
+  ```bash
+  kitty-reload
+  ```
+
+### 5. Notification Center Bell Does Not Open
+- Check if the `swaync` daemon is running:
+  ```bash
+  pgrep swaync || swaync &
+  ```
+- Trigger the panel directly from the terminal:
+  ```bash
+  swaync-client -t
+  ```

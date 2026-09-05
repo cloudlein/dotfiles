@@ -6,7 +6,7 @@ CDP_URL="http://127.0.0.1:9222/json"
 # Check Brave playback status via playerctl
 STATUS=$(playerctl -p brave status 2>/dev/null || true)
 if [[ "$STATUS" != "Playing" ]]; then
-    exit 0
+  exit 0
 fi
 
 # Fetch track metadata
@@ -15,17 +15,17 @@ ARTIST=$(playerctl -p brave metadata --format '{{ xesam:artist }}' 2>/dev/null |
 ALBUM=$(playerctl -p brave metadata --format '{{ xesam:album }}' 2>/dev/null || true)
 
 if [[ -z "$TITLE" ]]; then
-    TITLE=$(playerctl -p brave metadata --format '{{ title }}' 2>/dev/null || true)
+  TITLE=$(playerctl -p brave metadata --format '{{ title }}' 2>/dev/null || true)
 fi
 
 if [[ -z "$TITLE" ]]; then
-    exit 0
+  exit 0
 fi
 
 # Query Brave CDP to verify active tabs
 CDP_DATA=$(curl -s --connect-timeout 0.2 --max-time 0.5 "$CDP_URL" 2>/dev/null || true)
 if [[ -z "$CDP_DATA" ]]; then
-    exit 0
+  exit 0
 fi
 
 # 1. Reject if playing media matches a regular YouTube tab
@@ -38,7 +38,7 @@ IS_REGULAR_YT=$(echo "$CDP_DATA" | jq -r --arg title "$TITLE" '
 ' 2>/dev/null || echo 0)
 
 if [[ "$IS_REGULAR_YT" -gt 0 ]]; then
-    exit 0
+  exit 0
 fi
 
 # 2. Check if a whitelisted music tab title directly matches
@@ -53,10 +53,10 @@ MATCHED_TAB=$(echo "$CDP_DATA" | jq -r --arg title "$TITLE" '
 ' 2>/dev/null || true)
 
 if [[ -n "$MATCHED_TAB" ]]; then
-    SOURCE_HOST=$(echo "$MATCHED_TAB" | sed -E 's|^https?://([^/:]+).*|\1|')
+  SOURCE_HOST=$(echo "$MATCHED_TAB" | sed -E 's|^https?://([^/:]+).*|\1|')
 else
-    # Fallback: Identify active music platform by active player URL in CDP
-    SOURCE_HOST=$(echo "$CDP_DATA" | jq -r '
+  # Fallback: Identify active music platform by active player URL in CDP
+  SOURCE_HOST=$(echo "$CDP_DATA" | jq -r '
       if any(.[]; (.type == "page" and (.url != null and (.url | test("music\\.youtube\\.com/watch"))))) then
         "music.youtube.com"
       elif any(.[]; (.type == "page" and (.url != null and (.url | test("open\\.spotify\\.com"))))) then
@@ -70,27 +70,27 @@ else
 fi
 
 if [[ -z "$SOURCE_HOST" ]]; then
-    exit 0
+  exit 0
 fi
 
 # Set icon and CSS class based on source
 if [[ "$SOURCE_HOST" == *"spotify.com"* ]]; then
-    ICON=""
-    CLASS="spotify"
-    SOURCE_NAME="Spotify"
+  ICON=""
+  CLASS="spotify"
+  SOURCE_NAME="Spotify"
 elif [[ "$SOURCE_HOST" == *"music.youtube.com"* ]]; then
-    ICON="󰎆"
-    CLASS="ytmusic"
-    SOURCE_NAME="YouTube Music"
+  ICON="󰎆"
+  CLASS="ytmusic"
+  SOURCE_NAME="YouTube Music"
 else
-    exit 0
+  exit 0
 fi
 
 # Format display text and tooltip
 if [[ -n "$ARTIST" ]]; then
-    DISPLAY_TEXT="${ICON} ${ARTIST} - ${TITLE}"
+  DISPLAY_TEXT="${ICON} ${ARTIST} - ${TITLE}"
 else
-    DISPLAY_TEXT="${ICON} ${TITLE}"
+  DISPLAY_TEXT="${ICON} ${TITLE}"
 fi
 
 TOOLTIP="<b>${SOURCE_NAME}</b>\n<b>Title:</b> ${TITLE}\n<b>Artist:</b> ${ARTIST:-Unknown}\n<b>Album:</b> ${ALBUM:-Unknown}"

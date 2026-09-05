@@ -3,24 +3,24 @@
  * ========================================= */
 
 * {
-    bg: #0f1417;
-    bg-alt: #1c2023;
-    bg-high: #262b2e;
+    bg: #14140c;
+    bg-alt: #212018;
+    bg-high: #2b2a22;
 
-    fg: #dfe3e7;
-    fg-muted: #c0c7cd;
+    fg: #e6e2d5;
+    fg-muted: #cac7b5;
 
-    primary: #8fcff3;
-    on-primary: #003549;
+    primary: #ceca75;
+    on-primary: #343200;
 
-    primary-container: #004c68;
-    on-primary-container: #c3e8ff;
+    primary-container: #4b4900;
+    on-primary-container: #ebe68e;
 
-    secondary: #b5c9d7;
-    secondary-container: #364954;
+    secondary: #cbc8a4;
+    secondary-container: #49482c;
 
-    outline: #8a9297;
-    outline-variant: #41484d;
+    outline: #949181;
+    outline-variant: #49473a;
 
     error: #ffb4ab;
     on-error: #690005;

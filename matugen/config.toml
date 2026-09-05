@@ -34,5 +34,3 @@ post_hook = "pkill -SIGUSR1 kitty"
 [templates.nvim]
 input_path = "~/.config/matugen/templates/nvim.lua"
 output_path = "~/.config/matugen/generated/nvim.lua"
-
-
