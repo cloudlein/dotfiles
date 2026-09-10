@@ -24,7 +24,7 @@ ARTIST=$(playerctl -p brave metadata --format '{{ xesam:artist }}' 2>/dev/null |
 ALBUM=$(playerctl -p brave metadata --format '{{ xesam:album }}' 2>/dev/null || true)
 
 if [[ -z "$TITLE" ]]; then
-    TITLE=$(playerctl -p brave metadata --format '{{ title }}' 2>/dev/null || true)
+  TITLE=$(playerctl -p brave metadata --format '{{ title }}' 2>/dev/null || true)
 fi
 
 if [[ -z "$TITLE" ]]; then
@@ -62,10 +62,10 @@ MATCHED_TAB=$(echo "$CDP_DATA" | jq -r --arg title "$TITLE" '
 ' 2>/dev/null || true)
 
 if [[ -n "$MATCHED_TAB" ]]; then
-    SOURCE_HOST=$(echo "$MATCHED_TAB" | sed -E 's|^https?://([^/:]+).*|\1|')
+  SOURCE_HOST=$(echo "$MATCHED_TAB" | sed -E 's|^https?://([^/:]+).*|\1|')
 else
-    # Fallback: Identify active music platform by active player URL in CDP
-    SOURCE_HOST=$(echo "$CDP_DATA" | jq -r '
+  # Fallback: Identify active music platform by active player URL in CDP
+  SOURCE_HOST=$(echo "$CDP_DATA" | jq -r '
       if any(.[]; (.type == "page" and (.url != null and (.url | test("music\\.youtube\\.com/watch"))))) then
         "music.youtube.com"
       elif any(.[]; (.type == "page" and (.url != null and (.url | test("open\\.spotify\\.com"))))) then
@@ -84,22 +84,22 @@ fi
 
 # Set icon and CSS class based on the detected music platform
 if [[ "$SOURCE_HOST" == *"spotify.com"* ]]; then
-    ICON=""
-    CLASS="spotify"
-    SOURCE_NAME="Spotify"
+  ICON=""
+  CLASS="spotify"
+  SOURCE_NAME="Spotify"
 elif [[ "$SOURCE_HOST" == *"music.youtube.com"* ]]; then
-    ICON="󰎆"
-    CLASS="ytmusic"
-    SOURCE_NAME="YouTube Music"
+  ICON="󰎆"
+  CLASS="ytmusic"
+  SOURCE_NAME="YouTube Music"
 else
     not_playing
 fi
 
 # Build display text — include artist name if available
 if [[ -n "$ARTIST" ]]; then
-    DISPLAY_TEXT="${ICON} ${ARTIST} - ${TITLE}"
+  DISPLAY_TEXT="${ICON} ${ARTIST} - ${TITLE}"
 else
-    DISPLAY_TEXT="${ICON} ${TITLE}"
+  DISPLAY_TEXT="${ICON} ${TITLE}"
 fi
 
 TOOLTIP="<b>${SOURCE_NAME}</b>\n<b>Title:</b> ${TITLE}\n<b>Artist:</b> ${ARTIST:-Unknown}\n<b>Album:</b> ${ALBUM:-Unknown}"
