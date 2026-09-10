@@ -30,9 +30,14 @@ input_path = "~/.config/matugen/templates/kitty.conf"
 output_path = "~/.config/kitty/generated/matugen.conf"
 post_hook = "pkill -SIGUSR1 kitty"
 
-# nvim
+
+# nvim / NvChad
 [templates.nvim]
 input_path = "~/.config/matugen/templates/nvim.lua"
 output_path = "~/.config/matugen/generated/nvim.lua"
+
+[templates.cava]
+input_path = "~/.config/matugen/templates/cava"
+output_path = "~/.config/cava/config"
 
 

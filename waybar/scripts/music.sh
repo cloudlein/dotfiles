@@ -1,12 +1,21 @@
 #!/usr/bin/env bash
+# Displays currently playing music info in the Waybar status bar
+# Supports: Spotify & YouTube Music (via Brave browser)
 set -euo pipefail
 
+# Chrome DevTools Protocol (CDP) endpoint exposed by Brave
 CDP_URL="http://127.0.0.1:9222/json"
+
+# Helper: output idle/not-playing state
+not_playing() {
+    jq -nc '{"text": " No Music", "tooltip": "No music playing", "class": "idle"}'
+    exit 0
+}
 
 # Check Brave playback status via playerctl
 STATUS=$(playerctl -p brave status 2>/dev/null || true)
 if [[ "$STATUS" != "Playing" ]]; then
-    exit 0
+    not_playing
 fi
 
 # Fetch track metadata
@@ -19,13 +28,13 @@ if [[ -z "$TITLE" ]]; then
 fi
 
 if [[ -z "$TITLE" ]]; then
-    exit 0
+    not_playing
 fi
 
-# Query Brave CDP to verify active tabs
+# Fetch the list of open tabs from Brave via CDP (short timeout to stay fast)
 CDP_DATA=$(curl -s --connect-timeout 0.2 --max-time 0.5 "$CDP_URL" 2>/dev/null || true)
 if [[ -z "$CDP_DATA" ]]; then
-    exit 0
+    not_playing
 fi
 
 # 1. Reject if playing media matches a regular YouTube tab
@@ -38,7 +47,7 @@ IS_REGULAR_YT=$(echo "$CDP_DATA" | jq -r --arg title "$TITLE" '
 ' 2>/dev/null || echo 0)
 
 if [[ "$IS_REGULAR_YT" -gt 0 ]]; then
-    exit 0
+    not_playing
 fi
 
 # 2. Check if a whitelisted music tab title directly matches
@@ -70,10 +79,10 @@ else
 fi
 
 if [[ -z "$SOURCE_HOST" ]]; then
-    exit 0
+    not_playing
 fi
 
-# Set icon and CSS class based on source
+# Set icon and CSS class based on the detected music platform
 if [[ "$SOURCE_HOST" == *"spotify.com"* ]]; then
     ICON=""
     CLASS="spotify"
@@ -83,10 +92,10 @@ elif [[ "$SOURCE_HOST" == *"music.youtube.com"* ]]; then
     CLASS="ytmusic"
     SOURCE_NAME="YouTube Music"
 else
-    exit 0
+    not_playing
 fi
 
-# Format display text and tooltip
+# Build display text — include artist name if available
 if [[ -n "$ARTIST" ]]; then
     DISPLAY_TEXT="${ICON} ${ARTIST} - ${TITLE}"
 else
@@ -95,7 +104,7 @@ fi
 
 TOOLTIP="<b>${SOURCE_NAME}</b>\n<b>Title:</b> ${TITLE}\n<b>Artist:</b> ${ARTIST:-Unknown}\n<b>Album:</b> ${ALBUM:-Unknown}"
 
-# Output JSON for Waybar
+# Output JSON — the format Waybar expects to render the widget
 jq -nc \
   --arg text "$DISPLAY_TEXT" \
   --arg tooltip "$TOOLTIP" \

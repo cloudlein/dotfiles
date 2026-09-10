@@ -1,8 +1,8 @@
 @import "colors.css";
 
-#custom-music {
-    margin: 5px 0px 1px 6px;
-    padding: 3px 14px 3px 14px;
+#custom-weather {
+    margin: 5px 6px 1px 0px;
+    padding: 3px 10px;
     background-color: @surface_container;
     color: @secondary_fixed_dim;
     border-radius: 12px;
@@ -11,21 +11,23 @@
     transition: all 0.2s ease;
 }
 
-#custom-music:hover {
+#custom-weather:hover {
     background-color: @surface_container_high;
     color: @primary;
 }
 
-#custom-music.spotify {
-    color: #1ed760;
+#custom-weather.hot {
+    color: #ffb4ab;
 }
 
-#custom-music.ytmusic {
-    color: #ff4e45;
+#custom-weather.cold {
+    color: #90cef4;
 }
 
-#custom-music.idle {
+#custom-weather.normal {
+    color: @secondary_fixed_dim;
+}
+
+#custom-weather.unknown {
     color: @outline;
-    font-style: italic;
-    opacity: 0.6;
 }

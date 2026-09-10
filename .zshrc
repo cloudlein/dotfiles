@@ -379,3 +379,94 @@ sddm-info() {
 
 # Added by Antigravity CLI installer
 export PATH="/home/udin/.local/bin:$PATH"
+
+# ─── Waybar Countdown Timer ───────────────────────────────────────────────────
+# Usage:
+#   timer 25m          → set timer 25 menit
+#   timer 1h           → set timer 1 jam
+#   timer 1h30m        → set timer 1 jam 30 menit
+#   timer 90           → set timer 90 detik
+#   timer 25m "Kerja"  → set timer dengan label
+#   timer cancel       → batalkan timer
+#   timer status       → cek sisa waktu
+
+timer() {
+    local STATE="$HOME/.cache/waybar-timer.json"
+    local NOTIF="$HOME/.cache/waybar-timer.notified"
+
+    # Cancel
+    if [[ "$1" == "cancel" || "$1" == "stop" || "$1" == "reset" ]]; then
+        rm -f "$STATE" "$NOTIF"
+        echo "⏹ Timer dibatalkan."
+        return 0
+    fi
+
+    # Status
+    if [[ "$1" == "status" ]]; then
+        if [[ ! -f "$STATE" ]]; then
+            echo "Tidak ada timer aktif."
+            return 0
+        fi
+        local END=$(jq -r '.end' "$STATE")
+        local LABEL=$(jq -r '.label // ""' "$STATE")
+        local NOW=$(date +%s)
+        local REMAINING=$((END - NOW))
+        if [[ $REMAINING -le 0 ]]; then
+            echo "⏰ Timer sudah selesai${LABEL:+: $LABEL}"
+        else
+            local H=$((REMAINING / 3600))
+            local M=$(( (REMAINING % 3600) / 60 ))
+            local S=$((REMAINING % 60))
+            echo "⏳ Sisa: $(printf '%d:%02d:%02d' $H $M $S)${LABEL:+ — $LABEL}"
+        fi
+        return 0
+    fi
+
+    # Wajib ada argumen durasi
+    if [[ -z "$1" ]]; then
+        echo "Usage: timer <durasi> [label]"
+        echo "  Contoh: timer 25m"
+        echo "          timer 1h30m \"Istirahat\""
+        echo "          timer 90"
+        echo "          timer cancel"
+        return 1
+    fi
+
+    # Parse durasi: bisa 25m / 1h / 1h30m / 90 (detik)
+    local INPUT="$1"
+    local LABEL="$2"
+    local TOTAL=0
+    local H M S
+
+    if [[ "$INPUT" =~ ^([0-9]+h)?([0-9]+m)?([0-9]+s)?$ && "$INPUT" != "" ]]; then
+        H=$(echo "$INPUT" | grep -oP '\d+(?=h)'); H=${H:-0}
+        M=$(echo "$INPUT" | grep -oP '\d+(?=m)'); M=${M:-0}
+        S=$(echo "$INPUT" | grep -oP '\d+(?=s)'); S=${S:-0}
+        TOTAL=$(( H*3600 + M*60 + S ))
+    elif [[ "$INPUT" =~ ^[0-9]+$ ]]; then
+        TOTAL=$INPUT
+    else
+        echo "❌ Format durasi tidak valid: $INPUT"
+        echo "   Gunakan: 25m / 1h / 1h30m / 90"
+        return 1
+    fi
+
+    if [[ $TOTAL -le 0 ]]; then
+        echo "❌ Durasi harus lebih dari 0."
+        return 1
+    fi
+
+    local END=$(( $(date +%s) + TOTAL ))
+    local H_disp=$((TOTAL / 3600))
+    local M_disp=$(( (TOTAL % 3600) / 60 ))
+    local S_disp=$((TOTAL % 60))
+
+    # Simpan state
+    rm -f "$NOTIF"
+    jq -n --argjson end "$END" --arg label "$LABEL" \
+        '{end: $end, label: $label}' > "$STATE"
+
+    echo "⏳ Timer dimulai: $(printf '%d:%02d:%02d' $H_disp $M_disp $S_disp)${LABEL:+ — \"$LABEL\"}"
+    echo "   Selesai pukul: $(date -d @$END '+%H:%M:%S')"
+}
+# ─────────────────────────────────────────────────────────────────────────────
