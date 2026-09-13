@@ -8,13 +8,13 @@
     bg-high: #2b2a22;
 
     fg: #e6e2d5;
-    fg-muted: #cac7b5;
+    fg-muted: #cac7b6;
 
     primary: #ceca75;
-    on-primary: #343200;
+    on-primary: #333200;
 
     primary-container: #4b4900;
-    on-primary-container: #ebe68e;
+    on-primary-container: #eae68e;
 
     secondary: #cbc8a4;
     secondary-container: #49482c;

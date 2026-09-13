@@ -7,24 +7,34 @@ M.background = "#14140c"
 M.foreground = "#e6e2d5"
 
 M.primary = "#ceca75"
-M.on_primary = "#343200"
+M.on_primary = "#333200"
 
 M.primary_container = "#4b4900"
-M.on_primary_container = "#ebe68e"
+M.on_primary_container = "#eae68e"
 
 M.secondary = "#cbc8a4"
-M.on_secondary = "#333118"
+M.on_secondary = "#323118"
 
 M.secondary_container = "#49482c"
-M.on_secondary_container = "#e8e4be"
+M.on_secondary_container = "#e8e4bf"
 
 M.tertiary = "#a5d0bb"
-M.on_tertiary = "#0d3729"
+M.on_tertiary = "#0c3729"
 
 M.error = "#ffb4ab"
 M.on_error = "#690005"
 
 M.surface = "#14140c"
 M.surface_variant = "#49473a"
+
+M.outline = "#949181"
+M.outline_variant = "#49473a"
+
+M.primary_fixed = "#eae68e"
+M.primary_fixed_dim = "#ceca75"
+M.secondary_fixed = "#e8e4bf"
+M.secondary_fixed_dim = "#cbc8a4"
+M.tertiary_fixed = "#c0ecd7"
+M.tertiary_fixed_dim = "#a5d0bb"
 
 return M

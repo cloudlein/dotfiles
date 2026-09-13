@@ -3,7 +3,7 @@ return {
     "vyfor/cord.nvim",
     opts = {
       timer = {
-        enable = true,
+        enabled = true,
       },
 
       editor = {
@@ -16,7 +16,7 @@ return {
       },
 
       idle = {
-        enable = false,
+        enabled = false,
       },
     },
   },

@@ -133,6 +133,10 @@ if command -v kitty >/dev/null 2>&1; then
         >/dev/null 2>&1
 fi
 
+if pgrep -x nvim >/dev/null 2>&1; then
+    pkill -SIGUSR1 nvim 2>/dev/null
+fi
+
 if [ -x "$SDDM_SYNC" ]; then
     "$SDDM_SYNC" "$WALLPAPER"
 fi

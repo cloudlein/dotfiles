@@ -27,4 +27,14 @@ M.on_error = "{{ colors.on_error.default.hex }}"
 M.surface = "{{ colors.surface.default.hex }}"
 M.surface_variant = "{{ colors.surface_variant.default.hex }}"
 
+M.outline = "{{ colors.outline.default.hex }}"
+M.outline_variant = "{{ colors.outline_variant.default.hex }}"
+
+M.primary_fixed = "{{ colors.primary_fixed.default.hex }}"
+M.primary_fixed_dim = "{{ colors.primary_fixed_dim.default.hex }}"
+M.secondary_fixed = "{{ colors.secondary_fixed.default.hex }}"
+M.secondary_fixed_dim = "{{ colors.secondary_fixed_dim.default.hex }}"
+M.tertiary_fixed = "{{ colors.tertiary_fixed.default.hex }}"
+M.tertiary_fixed_dim = "{{ colors.tertiary_fixed_dim.default.hex }}"
+
 return M

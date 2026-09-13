@@ -28,9 +28,10 @@ output_path = "~/.config/rofi/matugen.rasi"
 [templates.kitty]
 input_path = "~/.config/matugen/templates/kitty.conf"
 output_path = "~/.config/kitty/generated/matugen.conf"
-post_hook = "pkill -SIGUSR1 kitty"
+post_hook = "pkill -SIGUSR1 kitty 2>/dev/null || true"
 
 # nvim
 [templates.nvim]
 input_path = "~/.config/matugen/templates/nvim.lua"
 output_path = "~/.config/matugen/generated/nvim.lua"
+post_hook = "pkill -SIGUSR1 nvim 2>/dev/null || true"
