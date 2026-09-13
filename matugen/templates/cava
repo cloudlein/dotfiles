@@ -1,0 +1,8 @@
+[general]
+bars = 0
+
+[color]
+gradient = 1
+gradient_count = 2
+gradient_color_1 = "{{ colors.primary.default.hex }}"
+gradient_color_2 = "{{ colors.secondary.default.hex }}"

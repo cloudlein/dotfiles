@@ -13,8 +13,8 @@ configuration {
 }
 
 window {
-    width: 1000px;
-    height: 700px;
+    width: 850px;
+    height: 650px;
 
     background-color: @bg;
 
@@ -60,14 +60,14 @@ entry {
 }
 
 listview {
-    columns: 2;
-    lines: 2;
-
-    spacing: 16px;
+    columns: 4;
+    lines: 3;
+    flow: horizontal; 
+    spacing: 10px;
 
     scrollbar: false;
 
-    fixed-height: false;
+    fixed-height: true;
     fixed-columns: true;
 }
 
@@ -108,8 +108,8 @@ element selected.normal {
 }
 
 element-icon {
-    size: 295px;
-    border-radius: 12px;
+    size: 150px;
+    border-radius: 10px;
     horizontal-align: 0.5;
     vertical-align: 0.5;
 }

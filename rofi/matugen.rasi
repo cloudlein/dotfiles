@@ -3,9 +3,9 @@
  * ========================================= */
 
 * {
-    bg: #14140c;
-    bg-alt: #212018;
-    bg-high: #2b2a22;
+    bg: #101510;
+    bg-alt: #1c211b;
+    bg-high: #272b26;
 
     fg: #e6e2d5;
     fg-muted: #cac7b6;
@@ -16,11 +16,11 @@
     primary-container: #4b4900;
     on-primary-container: #eae68e;
 
-    secondary: #cbc8a4;
-    secondary-container: #49482c;
+    secondary: #b8ccb5;
+    secondary-container: #3a4b39;
 
-    outline: #949181;
-    outline-variant: #49473a;
+    outline: #8c9389;
+    outline-variant: #424940;
 
     error: #ffb4ab;
     on-error: #690005;
